@@ -5,15 +5,15 @@
 #include <MySQL_Cursor.h>
 
 //SQL stuff
-char ssid[] = "COMHEM_f38715"; //Wi-Fi name
-char pass[] = "idzktnut"; //Wi-Fi password
+char ssid[] = " "; //Wi-Fi name
+char pass[] = " "; //Wi-Fi password
 int status = WL_IDLE_STATUS;
 WiFiEspServer server(80);
 WiFiEspClient client;
 MySQL_Connection conn((Client *)&client);
-IPAddress server_addr(192,168,0,12); //my IP adress //192,168,0,12 //83,248,22,144
-char user[] = "root"; // MySQL user
-char password[] = "1AkitaNeru00akitaNeru0"; // MySQL password
+IPAddress server_addr(0,0,0,0); //IP adress
+char user[] = " "; // MySQL user
+char password[] = " "; // MySQL password
 
 //PIRsensor
 int inputPin = 2; //choose the input pin (for PIR sensor)
