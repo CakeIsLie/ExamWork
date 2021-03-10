@@ -1,25 +1,49 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExJobb", "ExJobb\ExJobb.csproj", "{11E2AA2E-228B-432D-B9EB-16C38A935B19}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{11E2AA2E-228B-432D-B9EB-16C38A935B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11E2AA2E-228B-432D-B9EB-16C38A935B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11E2AA2E-228B-432D-B9EB-16C38A935B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11E2AA2E-228B-432D-B9EB-16C38A935B19}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E5FD6E01-EE16-4C28-9E9A-9CF3A10A5C2A}
-	EndGlobalSection
-EndGlobal
+using EASendMail;
+using System;
+
+namespace ExJobb
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                SmtpMail oMail = new SmtpMail("TryIt");
+
+                //sender email address
+                oMail.From = " ";
+                //recipient email address
+                oMail.To = " ";
+
+                //email subject
+                oMail.Subject = "test email from c# project";
+                //email body
+                oMail.TextBody = "this is a test email sent from c# project, if you get this by mistake please tell me so I can fix it";
+
+                //SMTP server address
+                SmtpServer oServer = new SmtpServer(" ");
+
+                //SSL/TLS connection
+                //ConnectTryTLS means if server supports SSL/TLS, SSL/TLS will be used automatically
+                oServer.ConnectType = SmtpConnectType.ConnectTryTLS;
+
+                //If your SMTP server requires SSL/TLS connection on 25/587/465 port
+                 oServer.Port = 25; // 25 or 587 or 465
+                 oServer.ConnectType = SmtpConnectType.ConnectSSLAuto;
+
+                Console.WriteLine("start to send email ...");
+
+                SmtpClient oSmtp = new SmtpClient();
+                oSmtp.SendMail(oServer, oMail);
+
+                Console.WriteLine("email was sent successfully!");
+            }
+            catch (Exception ep)
+            {
+                Console.WriteLine("failed to send email with the following error:");
+                Console.WriteLine(ep.Message);
+            }
+        }
+    }
+}
