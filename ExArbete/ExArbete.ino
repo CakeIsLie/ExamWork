@@ -21,7 +21,7 @@ int pirState = LOW; //we start thinking no motion detected
 int val = 0; //variable for reading the pin status
 
 //WIFI
-SoftwareSerial SerialWifi(9, 8); // TX, RX
+SoftwareSerial SerialWifi(9, 8); //TX, RX
 int movment = 0; //counting how many times PIR sensor have gone off
 unsigned long updateInterval = 60000; 
 unsigned long timeNow = 0;
