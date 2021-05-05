@@ -1,44 +1,104 @@
-using EASendMail;
+using Syncfusion.XlsIO;
+using MySql.Data.MySqlClient;
+//using EASendMail;
 using System;
+using System.Net.Mail;
+using Microsoft.Office.Interop;
+using System.IO;
 
 namespace ExJobb
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
+
+            void listMySql()
+            { 
+                //Connect to my MySql server
+                MySqlConnection connect = new MySqlConnection("datasource=localhost;port=3306;username=;password=");
+                _ = new MySqlDataAdapter("SELECT * FROM exjobb", connect);
+                connect.Open();
+
+                Console.WriteLine("Connecting to my MySQL database");
+    
+                string Mysql = "SELECT CountData FROM exjobb.datastore";
+                MySqlCommand Sqlcom;
+                Sqlcom = new MySqlCommand(Mysql, connect);
+                MySqlDataReader reader;
+
+
+                FileStream ostrm;
+                StreamWriter writer;
+                TextWriter oldOut = Console.Out;
+                try
+                {
+                    ostrm = new FileStream("./MysqlData.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                    writer = new StreamWriter(ostrm);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Cannot open MysqlData.txt for writing");
+                    Console.WriteLine(e.Message);
+                    return;
+                }
+
+                //List everything in the database
+                reader = Sqlcom.ExecuteReader();
+
+                
+                //Put everything in a txt document
+                while (reader.Read())
+                {
+                    Console.SetOut(writer);
+
+                    Console.WriteLine(reader[0] + "\n"); 
+
+                    Console.SetOut(oldOut);
+                 
+                }
+                writer.Close();
+                ostrm.Close();
+                Console.WriteLine("Done"); 
+                reader.Close();
+
+                //Close the connection
+                connect.Close();
+                Console.WriteLine("That is all");
+
+
+            }
+
+            listMySql();
             try
             {
-                SmtpMail oMail = new SmtpMail("TryIt");
-
-                //sender email address
-                oMail.From = " ";
-                //recipient email address
-                oMail.To = " ";
-
-                //email subject
-                oMail.Subject = "test email from c# project";
-                //email body
-                oMail.TextBody = "this is a test email sent from c# project, if you get this by mistake please tell me so I can fix it";
+                MailMessage mail = new MailMessage();
 
                 //SMTP server address
-                SmtpServer oServer = new SmtpServer(" ");
+                SmtpClient SmtpServer = new SmtpClient("mailout.comhem.se");
+                //sender email address
+                mail.From = new MailAddress(" ");
+                //recipient email address
+                mail.To.Add(" ");
+                mail.Subject = "Test Mail from c# code";
+                mail.Body = "mail with attachment, this is a test email sent from c# project, if you get this by mistake please tell me so I can fix it";
 
-                //SSL/TLS connection
-                //ConnectTryTLS means if server supports SSL/TLS, SSL/TLS will be used automatically
-                oServer.ConnectType = SmtpConnectType.ConnectTryTLS;
+                //Put an attachment to the email, (in codes filemap)
+                Attachment attachment;
+                attachment = new Attachment("MysqlData.txt");
+                mail.Attachments.Add(attachment);
 
                 //If your SMTP server requires SSL/TLS connection on 25/587/465 port
-                 oServer.Port = 25; // 25 or 587 or 465
-                 oServer.ConnectType = SmtpConnectType.ConnectSSLAuto;
+                SmtpServer.Port = 25;
+                bool ConnectSSLAuto = false;
+                SmtpServer.EnableSsl = ConnectSSLAuto;
 
-                Console.WriteLine("start to send email ...");
-
-                SmtpClient oSmtp = new SmtpClient();
-                oSmtp.SendMail(oServer, oMail);
+                SmtpServer.Send(mail);
 
                 Console.WriteLine("email was sent successfully!");
             }
+            //If anything dont work tell the error
             catch (Exception ep)
             {
                 Console.WriteLine("failed to send email with the following error:");
